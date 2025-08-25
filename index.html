@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guía 03 – Programación Funcional en Kotlin (Resuelta)</title>
+    <style>
+      :root {
+        --bg: #f7f7fb;
+        --fg: #222;
+        --card: #fff;
+        --muted: #555;
+        --accent: #2c7be5;
+        --code-bg: #1e1e1e;
+        --code-fg: #f8f8f2;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol";
+        line-height: 1.6;
+      }
+      /* Márgenes ~3cm a izquierda/derecha como pediste */
+      .container {
+        margin-left: 3cm;
+        margin-right: 3cm;
+        padding: 24px 0 64px;
+      }
+      /* Fallback para pantallas pequeñas */
+      @media (max-width: 900px) {
+        .container {
+          margin-left: 1rem;
+          margin-right: 1rem;
+        }
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
+        color: #0f172a;
+      }
+      h1 {
+        font-size: clamp(1.8rem, 2.2vw + 1rem, 2.4rem);
+        margin: 0 0 10px;
+      }
+      h2 {
+        font-size: clamp(1.4rem, 1.6vw + 1rem, 1.8rem);
+        margin-top: 28px;
+      }
+      h3 {
+        font-size: 1.15rem;
+        margin-top: 18px;
+      }
+      .lead {
+        color: var(--muted);
+        margin: 0 0 14px;
+      }
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 18px;
+        color: #334155;
+      }
+      .pill {
+        background: #e2e8f0;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 14px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+        margin: 14px 0 22px;
+      }
+      pre {
+        background: var(--code-bg);
+        color: var(--code-fg);
+        border-radius: 10px;
+        padding: 14px;
+        overflow-x: auto;
+        font-size: 0.95rem;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+      }
+      ul {
+        padding-left: 1.1rem;
+      }
+      .hr {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 24px 0;
+      }
+      .note {
+        font-size: 0.95rem;
+        color: #475569;
+      }
+      footer {
+        color: #475569;
+        margin-top: 36px;
+        font-size: 0.95rem;
+      }
+      .ok {
+        color: #0a7f2e;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="card">
+        <h1>Guía 03 – Programación Funcional en Kotlin (Resuelta)</h1>
+        <p class="lead">
+          Construcción de aplicaciones móviles – Programa de Ingeniería de
+          Software
+        </p>
+        <div class="meta">
+          <span class="pill"
+            ><b>Título:</b> Programación Funcional en Kotlin</span
+          >
+          <span class="pill"><b>Duración estimada:</b> 60 min</span>
+          <span class="pill"><b>Docente:</b> Carlos Andrés Florez</span>
+          <span class="pill"><b>Guía:</b> 03</span>
+          <span class="pill"
+            ><b>Estudiante:</b> Kevin Santiago Aguirre Giraldo</span
+          >
+        </div>
+        <p class="note">
+          Esta guía resuelta presenta ejemplos (distintos a los del material
+          base) para cada pilar de la programación funcional, y un programa
+          práctico que usa <code>apply</code>, <code>let</code>,
+          <code>also</code>, <code>with</code> y <code>run</code> modelando una
+          mini app de gestión de usuarios.
+        </p>
+      </header>
+
+      <section class="card">
+        <h2>Introducción</h2>
+        <p>
+          La programación funcional favorece <b>inmutabilidad</b>,
+          <b>funciones puras</b>, uso de <b>lambdas</b>,
+          <b>funciones de orden superior</b>, <b>evaluación perezosa</b> y
+          <b>composición de funciones</b>. En Kotlin, estos principios son
+          soporte clave para patrones modernos y para UI declarativa como
+          Jetpack Compose.
+        </p>
+      </section>
+
+      <div class="hr"></div>
+
+      <section class="card">
+        <h2>Actividades Prácticas — Ejemplos por pilar</h2>
+
+        <!-- 1. INMUTABILIDAD -->
+        <h3>1) Inmutabilidad</h3>
+        <pre><code class="language-kotlin">// Ejemplo A: historial de pedidos como secuencia de estados inmutables
+data class Pedido(val id: Int, val items: List&lt;String&gt;, val estado: String)
+
+val pedidoInicial = Pedido(1, listOf("Teclado", "Mouse"), "CREADO")
+val pedidoPagado = pedidoInicial.copy(estado = "PAGADO")
+val pedidoEnviado = pedidoPagado.copy(estado = "ENVIADO")
+
+println(pedidoInicial) // CREADO
+println(pedidoPagado)  // PAGADO
+println(pedidoEnviado) // ENVIADO
+
+// Ejemplo B: agregar roles sin mutar la lista original
+val rolesBase = listOf("LECTOR")
+val rolesConEditor = rolesBase + "EDITOR"
+val rolesFinales = rolesConEditor + "ADMIN"
+
+println(rolesBase)    // [LECTOR]
+println(rolesConEditor) // [LECTOR, EDITOR]
+println(rolesFinales) // [LECTOR, EDITOR, ADMIN]</code></pre>
+
+        <!-- 2. FUNCIONES PURAS -->
+        <h3>2) Funciones puras</h3>
+        <pre><code class="language-kotlin">// Ejemplo A: calcular precio con impuestos (sin tocar estado global)
+fun precioConIVA(precioBase: Double, iva: Double): Double = precioBase * (1 + iva)
+
+println(precioConIVA(100.0, 0.19)) // 119.0
+
+// Ejemplo B: normalizar nombres (mismo input = mismo output)
+fun normalizarNombre(nombre: String): String =
+    nombre.trim().lowercase().replaceFirstChar { it.titlecase() }
+
+println(normalizarNombre("  keVIN ")) // Kevin</code></pre>
+
+        <!-- 3. LAMBDAS -->
+        <h3>3) Expresiones lambda</h3>
+        <pre><code class="language-kotlin">// Ejemplo A: lambda como val reutilizable para validar contraseñas
+val esPasswordSegura: (String) -&gt; Boolean = { pwd -&gt;
+    pwd.length &gt;= 8 &amp;&amp; pwd.any { it.isDigit() } &amp;&amp; pwd.any { it.isUpperCase() }
+}
+println(esPasswordSegura("Kotlin2025")) // true
+
+// Ejemplo B: transformar una lista de emails a usuarios (map + lambda)
+data class UsuarioDTO(val email: String)
+val emails = listOf("a@dom.com", "b@dom.com")
+val usuariosDTO = emails.map { UsuarioDTO(it) }
+println(usuariosDTO)</code></pre>
+
+        <!-- 4. ORDEN SUPERIOR -->
+        <h3>4) Funciones de orden superior</h3>
+        <pre><code class="language-kotlin">// Ejemplo A: función que recibe una transformación para puntajes
+fun transformarPuntajes(p: List&lt;Int&gt;, f: (Int) -&gt; Int): List&lt;Int&gt; = p.map(f)
+
+val puntajes = listOf(50, 70, 90)
+val curva = transformarPuntajes(puntajes) { it + 5 }
+println(curva) // [55, 75, 95]
+
+// Ejemplo B: función que devuelve otra función (generar validador mínimo)
+fun minLengthValidator(min: Int): (String) -&gt; Boolean = { it.length &gt;= min }
+
+val valida8 = minLengthValidator(8)
+println(valida8("abcdefg"))  // false
+println(valida8("abcdefgh")) // true</code></pre>
+
+        <!-- 5. EVALUACIÓN PEREZOSA -->
+        <h3>5) Evaluación perezosa</h3>
+        <pre><code class="language-kotlin">// Ejemplo A: propiedad lazy para diferir un cálculo caro
+val configuracion by lazy {
+    println("Cargando configuración...")
+    mapOf("tema" to "oscuro", "lenguaje" to "es")
+}
+println("Antes de acceder a configuracion")
+println(configuracion) // aquí se inicializa
+
+// Ejemplo B: secuencia de IDs únicos generados al vuelo
+val ids = generateSequence(1000) { it + 1 }
+println(ids.take(4).toList()) // [1000, 1001, 1002, 1003]</code></pre>
+
+        <!-- 6. COMPOSICIÓN -->
+        <h3>6) Composición de funciones</h3>
+        <pre><code class="language-kotlin">// Ejemplo A: composición simple con extensiones
+fun String.soloLetras() = filter { it.isLetter() }
+fun String.capitalizeFirst() = replaceFirstChar { it.titlecase() }
+
+val limpio = "  jUaN-123  ".trim().soloLetras().lowercase().capitalizeFirst()
+println(limpio) // Juan
+
+// Ejemplo B: pipeline funcional sobre colecciones
+val productos = listOf("  mouse gaming  ", "TECLADO mecánico", "Pad ")
+val normalizados = productos
+  .map { it.trim() }
+  .filter { it.isNotEmpty() }
+  .map { it.lowercase().replaceFirstChar { c -&gt; c.titlecase() } }
+
+println(normalizados) // [Mouse gaming, Teclado mecánico, Pad]</code></pre>
+      </section>
+
+      <div class="hr"></div>
+
+      <section class="card">
+        <h2>Programa práctico: gestión de usuarios con funciones de ámbito</h2>
+        <p class="note">
+          Este pequeño módulo modela un flujo de registro/actualización/consulta
+          en una “app” de usuarios. Usa
+          <code>apply</code> (inicializar/encadenar), <code>let</code> (operar
+          si no nulo), <code>also</code> (side-effect controlado, p. ej.
+          logging), <code>with</code> (operar varias veces sobre el mismo
+          receptor), y <code>run</code> (ejecutar y devolver resultado).
+        </p>
+        <pre><code class="language-kotlin">data class Usuario(
+    val id: Int,
+    var nombre: String,
+    var email: String?,
+    val roles: List&lt;String&gt; = emptyList()
+)
+
+class UsuarioRepo {
+    // Internamente mutable, pero exponemos operaciones que devuelven datos nuevos o resultados
+    private val datos = mutableListOf&lt;Usuario&gt;()
+
+    fun registrar(nombre: String, email: String?): Usuario {
+        val nuevo = Usuario(
+            id = (datos.maxOfOrNull { it.id } ?: 0) + 1,
+            nombre = nombre,
+            email = null
+        ).apply {
+            // apply: inicializamos campos encadenando lógica
+            this.email = email?.trim()?.lowercase()
+        }.also {
+            // also: realizamos un efecto colateral controlado (log)
+            println("[LOG] Registrando usuario: $it")
+        }
+
+        datos += nuevo
+        return nuevo
+    }
+
+    fun actualizarEmail(id: Int, nuevoEmail: String?): Boolean {
+        val u = datos.find { it.id == id } ?: return false
+        // let: solo si no es nulo ni vacío lo aplicamos
+        nuevoEmail?.trim()?.takeIf { it.isNotEmpty() }?.let { mailOk ->
+            u.email = mailOk.lowercase()
+            println("[LOG] Email actualizado para ${u.id} =&gt; ${u.email}")
+            return true
+        }
+        return false
+    }
+
+    fun asignarRol(id: Int, rol: String): Boolean {
+        val u = datos.find { it.id == id } ?: return false
+        // with: trabajamos varias veces con el mismo objeto
+        with(u) {
+            if (!roles.contains(rol)) {
+                val nuevosRoles = roles + rol
+                // run: calculamos y devolvemos un resultado en un bloque
+                return run {
+                    val actualizado = copy(roles = nuevosRoles)
+                    // reemplazo in-place de la referencia interna
+                    val idx = datos.indexOfFirst { it.id == id }
+                    if (idx != -1) datos[idx] = actualizado
+                    println("[LOG] Rol agregado a ${actualizado.id}: ${actualizado.roles}")
+                    true
+                }
+            } else {
+                println("[LOG] Usuario $id ya tiene el rol $rol")
+                return false
+            }
+        }
+    }
+
+    fun listar(): List&lt;Usuario&gt; = datos.toList()
+}
+
+fun main() {
+    val repo = UsuarioRepo()
+
+    val u1 = repo.registrar(nombre = "Kevin Santiago Aguirre Giraldo", email = "  KEVIN@MAIL.COM ")
+    val u2 = repo.registrar(nombre = "Ana María", email = null)
+
+    repo.actualizarEmail(u2.id, "ana@example.com")
+    repo.asignarRol(u1.id, "ADMIN")
+    repo.asignarRol(u1.id, "EDITOR")
+    repo.asignarRol(u2.id, "LECTOR")
+
+    // let + run para construir un resumen bonito de la lista
+    repo.listar().let { lista -&gt;
+        val resumen = lista.joinToString("\n") { u -&gt;
+            u.run { "(${id}) $nombre  &lt;$email&gt;  roles=$roles" }
+        }
+        println("--- Usuarios ---")
+        println(resumen)
+    }
+}</code></pre>
+
+        <p>
+          <span class="ok"></span> Se usan las 5 funciones de ámbito:
+          <b>apply</b> (inicialización del usuario), <b>let</b> (si email no es
+          nulo/vacío), <b>also</b> (logging al registrar), <b>with</b> (operar
+          varias veces sobre el mismo usuario), <b>run</b> (bloques que
+          devuelven un valor/resultado).
+        </p>
+      </section>
+
+      <footer>
+        <p><b>Autor:</b> Kevin Santiago Aguirre Giraldo</p>
+      </footer>
+    </div>
+  </body>
+</html>
